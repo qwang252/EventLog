@@ -1,52 +1,40 @@
 import numpy as np
 import math
 # 1.
-def dir(x1,x2):
-  if len(x1) != len(x2):
-     print("not valid vector")
-     return
-  dir=[]
-  for i in range(len(x1)):
-     dir.append(x2[i]-x1[i])
-  return dir
 
-def leng(x1,x2):
-  dirc=dir(x1,x2)
+def dirc_leng_unit(x1,x2):
   if len(x1) != len(x2):
      print("not valid vector")
      return
+  dirc=[]
   leng=0
+  for i in range(len(x1)):
+     dirc.append(x2[i]-x1[i])
+  
   for i in range(len(dirc)):
       leng+=dirc[i]*dirc[i]
   leng=math.sqrt(leng)
-  return leng
-
-def unitdir(x1,x2):
-  length=leng(x1,x2)
-  if len(x1) != len(x2):
-     print("not valid vector")
-     return
   unit=[]
-  if length ==0 
-     unit=[0 0 0]
-     return unit
-  for i in range(len(x1)):
-     unit.append(float(x2[i]-x1[i])/length)
-  return unit
+  if leng ==0:
+     unit=[0, 0, 0]
+     
+  else:
+     for i in range(len(x1)):
+        unit.append(float(x2[i]-x1[i])/leng)
+  return dirc,leng,unit 
 
 # a. the distance between two vectors 
-length=leng([8,1,2],[3,4,5])  
+length=dirc_leng_unit([8,1,2],[3,4,5])[1]
 print("the distance is "+str(length))
 # b. the unit vector
-unit=unitdir([8,1,2],[3,4,5])
+unit=dirc_leng_unit([8,1,2],[3,4,5])[2]
 print("the unit vector is "+str(unit))
 # c. the energy of the particle
-#def ene(en):
-#  en=en*10e6
-#  return en
-
-enr=2.3*10e6
-print("energy is "+str(enr)+"ev.")
+def ene(en):
+  en=en*10e6
+  return en
+enr=ene(2.3)
+print("the energy is "+str(enr)+"ev.")
 
 # 2.
 # The best container to store information about an event is dictionary. 
@@ -64,8 +52,8 @@ print("energy is "+str(enr)+"ev.")
 # example:
 ID_num=43 #ID number
 loc=[3,4,5] #location of the event
-dir=unitdir([8,1,2],loc) #the unit direction of the particle
-en=2.3*10e6 #energy as it arrived at the collision
+dir=dirc_leng_unit([8,1,2],loc)[2] #the unit direction of the particle
+en=ene(2.3) #energy as it arrived at the collision
 aty=(1,2) #atomic number of D is 1; atomic mass of D is 2
 rty=102 #reaction type is 102
 
@@ -91,12 +79,13 @@ change_en=evenlog[5].get('eneg')-evenlog[4].get('eneg')
 dist=leng(evenlog[6].get('location'),evenlog[7].get('location'))
 
 # c.
-
+# positiv z direction
 z_hat=[0,0,1]
-loc1=evenlog[1].get('location')
-loc2=evenlog[2].get('location')
-norm1=unitdir([0,0,0],loc1)
-norm2=unitdir([0,0,0],loc2)
+loc1=evenlog[3].get('location')
+loc2=evenlog[8].get('location')
+norm1=dirc_leng_unit([0,0,0],loc1)[2]
+norm2=dirc_leng_unit([0,0,0],loc2)[2]
+# the more aligned unit vector has greater dot product with positiv z-axis
 if np.dot(norm1,z_hat) > np.dot(norm2,z_hat):
    print("the more aligned vector is event "+ str(evenlog[3]) )
 elif np.dot(norm1,z_hat) == np.dot(norm2,z_hat):
